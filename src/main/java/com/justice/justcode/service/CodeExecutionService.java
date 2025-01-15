@@ -1,5 +1,6 @@
 package com.justice.justcode.service;
 
+import com.justice.justcode.dto.CodeExecutionResponse;
 import com.justice.justcode.dto.CodeRequest;
 import com.justice.justcode.execution.CodeExecutor;
 import com.justice.justcode.execution.CodeExecutorFactory;
@@ -15,7 +16,7 @@ public class CodeExecutionService {
         this.codeExecutorFactory = codeExecutorFactory;
     }
 
-    public String excuteCode(CodeRequest codeRequest) throws IOException, InterruptedException {
+    public CodeExecutionResponse excuteCode(CodeRequest codeRequest) throws IOException, InterruptedException {
         CodeExecutor codeExecutor = codeExecutorFactory.getExecutor(codeRequest.getLanguage());
 
         if(codeExecutor == null){

@@ -1,5 +1,6 @@
 package com.justice.justcode.execution;
 
+import com.justice.justcode.dto.CodeExecutionResponse;
 import com.justice.justcode.dto.CodeRequest;
 
 import java.io.BufferedReader;
@@ -10,9 +11,9 @@ import java.nio.file.Files;
 
 public abstract class AsbstractCodeExecutor implements CodeExecutor{
     @Override
-    public String execute(CodeRequest codeRequest) throws IOException, InterruptedException {
-
-        String filename = "main." + codeRequest.getExtension();
+    public CodeExecutionResponse execute(CodeRequest codeRequest) throws IOException, InterruptedException {
+        String output;
+        String filename = "Main." + codeRequest.getExtension();
         File program = new File(filename);
 
         Files.writeString(program.toPath(),codeRequest.getCode());
@@ -20,15 +21,17 @@ public abstract class AsbstractCodeExecutor implements CodeExecutor{
         try{
             ProcessResults compileResults = compile(filename);
             if(compileResults.exitCode() != 0){
-                return "Compilation Failed! Errors: \n" + compileResults.output();
+                output = "Compilation Failed!<br>Errors: <br>" + compileResults.output();
+                return new CodeExecutionResponse(output, false);
             }
 
             ProcessResults runResults = run(filename);
             if(runResults.exitCode() != 0){
-                return "Program Execution Failed! Errors: \n" + runResults.output();
+                output = "Program Execution Failed!<br>Errors: <br>" + runResults.output();
+                return new CodeExecutionResponse(output, false);
             }
-
-            return "Program Execution Successful. Output: \n" + runResults.output();
+            output = "Program Execution Successful!<br>Output: <br>" + runResults.output();
+            return new CodeExecutionResponse(output, true);
         }finally {
             Files.deleteIfExists(program.toPath());
         }
